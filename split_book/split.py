@@ -10,7 +10,7 @@ from distribute_data import Distribute_Bookcrossing
 input_size = [160, 160]
 hidden_sizes = {"client_1": [128], "client_2": [128], "server": [128, 128]}
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+print(device)
 watch_vec_size = 64
 search_vec_size = 64
 other_feat_size = 32
@@ -215,6 +215,7 @@ def train_model(epoch, dataset):
 
 if __name__=="__main__":
     res=[]
+    print("padding")
     for j in range(30):
         models = {
             "client_1": nn.Sequential(
@@ -230,9 +231,9 @@ if __name__=="__main__":
             "server": nn.Sequential(
                 nn.Linear(128, 256),
                 nn.ReLU(),
-                nn.Linear(256, 128),
+                nn.Linear(256, 256),
                 nn.ReLU(),
-                nn.Linear(128, 17384),
+                nn.Linear(256, 17384),
                 nn.LogSoftmax(dim=1)
             )
         }
@@ -244,7 +245,7 @@ if __name__=="__main__":
                 param.to(device)
         optimizers = [optim.Adam(models[location].parameters(), lr=0.01, ) for location in model_locations]
         splitnn = SplitNN(models, optimizers, data_owners).to(device)
-        temp=train_model(18,deal_dataset)
+        temp=train_model(25,deal_dataset)
         res.append(temp)
     sum=0
     for i in res:
